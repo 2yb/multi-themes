@@ -1,4 +1,4 @@
-# HipsterApp - Multi-Theme Switcher
+# App - Multi-Theme Switcher
 
 A sophisticated React application demonstrating advanced theme switching with complete layout transformations, built with TypeScript and Tailwind CSS.
 
