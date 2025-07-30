@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/multi-themes/static/css/main.cfd824bd.css",
+    "main.js": "/multi-themes/static/js/main.ab01fa67.js",
+    "index.html": "/multi-themes/index.html",
+    "main.cfd824bd.css.map": "/multi-themes/static/css/main.cfd824bd.css.map",
+    "main.ab01fa67.js.map": "/multi-themes/static/js/main.ab01fa67.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.cfd824bd.css",
+    "static/js/main.ab01fa67.js"
+  ]
+}
