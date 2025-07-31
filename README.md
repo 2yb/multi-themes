@@ -1,4 +1,20 @@
-# App - Multi-Theme Switcher
+# HipsterApp -VARUN SAXENA - React Developer Assessment
+
+## Live Demo
+
+🔗 https://2yb.github.io/multi-themes
+
+## Test Credentials
+
+- **Regular User:** user@test.com / password123
+- **Admin User:** admin@test.com / admin123
+
+## Setup Instructions
+
+1. Clone the repository
+2. Run `npm install`
+3. Run `npm start`
+4. Open http://localhost:3000
 
 A sophisticated React application demonstrating advanced theme switching with complete layout transformations, built with TypeScript and Tailwind CSS.
 
