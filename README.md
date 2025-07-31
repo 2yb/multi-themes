@@ -12,6 +12,14 @@ A sophisticated React application demonstrating advanced theme switching with co
 - **Responsive Design**: Optimized for all device sizes
 - **Smooth Animations**: Elegant transitions between themes
 - **Performance Optimized**: Efficient rendering and state management
+  **authentication**:Modal-based authentication -**Secure**: Protected content (products require login)
+
+### Test Credentials
+
+Login modal will display these credentials:
+
+- **Regular User:** user@test.com / password123
+- **Admin User:** admin@test.com / admin123
 
 ## 🎨 Theme Details
 
