@@ -1,13 +1,55 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useTheme } from "../contexts/ThemeContext";
 import { useProducts } from "../hooks/useProducts";
 import { ProductCard } from "../components/ProductCard";
 import { LoadingSpinner } from "../components/LoadingSpinner";
+import { LoginModal } from "../components/LoginModal";
+
+interface User {
+  email: string;
+  password: string;
+  role: string;
+}
 
 export const Home: React.FC = () => {
   const { theme, isAnimating } = useTheme();
   const { products, loading, error } = useProducts();
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+
+  // Check if user is already logged in
+  useEffect(() => {
+    const loggedInUser = localStorage.getItem("loggedInUser");
+    if (loggedInUser) {
+      const user = JSON.parse(loggedInUser);
+      setIsLoggedIn(true);
+      setCurrentUser(user);
+    }
+  }, []);
+
+  const handleLogin = (user: User) => {
+    setIsLoggedIn(true);
+    setCurrentUser(user);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("loggedInUser");
+    setIsLoggedIn(false);
+    setCurrentUser(null);
+  };
+
+  const handleExploreClick = () => {
+    if (!isLoggedIn) {
+      setIsLoginModalOpen(true);
+    } else {
+      // Scroll to products section or navigate somewhere
+      document.getElementById("products-section")?.scrollIntoView({
+        behavior: "smooth",
+      });
+    }
+  };
 
   const getPageClass = () => {
     const base = `min-h-screen pt-16 transition-all duration-500 ease-in-out ${
@@ -99,16 +141,56 @@ export const Home: React.FC = () => {
               📧 Contact
             </Link>
           </nav>
+
+          {/* User Status in Sidebar */}
           <div className="mt-8 p-4 bg-gray-700 rounded">
-            <h4 className="text-amber-400 font-serif mb-2">Featured</h4>
-            <p className="text-gray-300 text-sm">
-              Discover amazing products from our curated collection.
-            </p>
+            {isLoggedIn ? (
+              <div>
+                <h4 className="text-amber-400 font-serif mb-2">Welcome!</h4>
+                <p className="text-gray-300 text-sm mb-2">
+                  Logged in as:{" "}
+                  <span className="text-amber-400">{currentUser?.role}</span>
+                </p>
+                <button
+                  onClick={handleLogout}
+                  className="text-xs text-gray-400 hover:text-white underline"
+                >
+                  Logout
+                </button>
+              </div>
+            ) : (
+              <div>
+                <h4 className="text-amber-400 font-serif mb-2">Featured</h4>
+                <p className="text-gray-300 text-sm">
+                  Discover amazing products from our curated collection.
+                </p>
+              </div>
+            )}
           </div>
         </aside>
       )}
 
       <main className={getMainClass()}>
+        {/* User Status Bar for theme1 and theme3 */}
+        {theme !== "theme2" && isLoggedIn && (
+          <div
+            className={`mb-4 p-3 rounded-lg text-center ${
+              theme === "theme1"
+                ? "bg-green-100 text-green-800"
+                : "bg-purple-100 text-purple-800"
+            }`}
+          >
+            Welcome back! You're logged in as{" "}
+            <span className="font-semibold">{currentUser?.role}</span>
+            <button
+              onClick={handleLogout}
+              className="ml-3 text-sm underline hover:no-underline"
+            >
+              Logout
+            </button>
+          </div>
+        )}
+
         <h1
           className={getTitleClass()}
           style={theme === "theme3" ? { fontFamily: "Pacifico, cursive" } : {}}
@@ -124,6 +206,7 @@ export const Home: React.FC = () => {
 
         <div className={`mb-8 ${theme === "theme1" ? "text-center" : ""}`}>
           <button
+            onClick={handleExploreClick}
             className={`px-8 py-3 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105
             ${
               theme === "theme1"
@@ -142,11 +225,11 @@ export const Home: React.FC = () => {
             }
           `}
           >
-            Explore Products
+            {isLoggedIn ? "Explore Products" : "Login to Explore"}
           </button>
         </div>
 
-        <section>
+        <section id="products-section">
           <h2
             className={`text-2xl font-bold mb-8
             ${theme === "theme1" ? "text-gray-900" : ""}
@@ -160,22 +243,59 @@ export const Home: React.FC = () => {
             Featured Products
           </h2>
 
-          {loading && <LoadingSpinner />}
-          {error && (
-            <div className="text-center py-8 text-red-500">
-              <p>Error loading products: {error}</p>
+          {!isLoggedIn ? (
+            <div
+              className={`text-center py-12 ${
+                theme === "theme1"
+                  ? "text-gray-600"
+                  : theme === "theme2"
+                  ? "text-gray-300"
+                  : "text-purple-600"
+              }`}
+            >
+              <div className="text-6xl mb-4">🔒</div>
+              <h3 className="text-xl font-semibold mb-2">Login Required</h3>
+              <p className="mb-4">Please log in to view our amazing products</p>
+              <button
+                onClick={() => setIsLoginModalOpen(true)}
+                className={`px-6 py-2 rounded-lg font-medium transition-colors ${
+                  theme === "theme1"
+                    ? "bg-blue-600 hover:bg-blue-700 text-white"
+                    : theme === "theme2"
+                    ? "bg-amber-500 hover:bg-amber-600 text-black"
+                    : "bg-purple-600 hover:bg-purple-700 text-white"
+                }`}
+              >
+                Login Now
+              </button>
             </div>
-          )}
+          ) : (
+            <>
+              {loading && <LoadingSpinner />}
+              {error && (
+                <div className="text-center py-8 text-red-500">
+                  <p>Error loading products: {error}</p>
+                </div>
+              )}
 
-          {!loading && !error && (
-            <div className={getGridClass()}>
-              {products.map((product) => (
-                <ProductCard key={product.id} product={product} />
-              ))}
-            </div>
+              {!loading && !error && (
+                <div className={getGridClass()}>
+                  {products.map((product) => (
+                    <ProductCard key={product.id} product={product} />
+                  ))}
+                </div>
+              )}
+            </>
           )}
         </section>
       </main>
+
+      {/* Login Modal */}
+      <LoginModal
+        isOpen={isLoginModalOpen}
+        onClose={() => setIsLoginModalOpen(false)}
+        onLogin={handleLogin}
+      />
     </div>
   );
 };
